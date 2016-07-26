@@ -101,6 +101,22 @@ def assign_grade(github, title, grade):
     print "Grade %s assigned to %s." % (grade, github)
 
 
+def get_all_grades_by_student(github):
+    """Print all grades associated with a single student."""
+
+    QUERY = """
+        SELECT project_title, grade
+        FROM grades
+        WHERE student_github = :github
+        """
+
+    db_cursor = db.session.execute(QUERY, {'github': github})
+    rows = db_cursor.fetchall()
+
+    for row in rows:
+        print "Project: %s, Grade: %s" % (row[0], row[1])
+
+
 def handle_input():
     """Main loop.
 
@@ -134,6 +150,10 @@ def handle_input():
         elif command == "assign_grade":
             github, title, grade = args
             assign_grade(github, title, grade)
+
+        elif command == "get_all_grades":
+            github = args[0]
+            get_all_grades_by_student(github)
 
         else:
             if command != "quit":
